@@ -9,5 +9,8 @@ there are 4 scripts
 for code to work "household_power_consumption.txt" should be in your working directory
 you can find working directory using getwd()
 
+to run script just open each .R script in R using file->open script
+then edit->run all
+
 thanks
 Muhammad Suleman
