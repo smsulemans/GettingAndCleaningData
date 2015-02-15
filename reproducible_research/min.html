@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+.knitr.inline {
+  background-color: #f7f7f7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+	font-weight: bold;
+	color: #FF0000;
+},
+.warning {
+	font-weight: bold;
+}
+.message {
+	font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+	padding: 0em 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #f5f5f5;
+}
+.rimage.left {
+  text-align: left;
+}
+.rimage.right {
+  text-align: right;
+}
+.rimage.center {
+  text-align: center;
+}
+.hl.num {
+  color: #AF0F91;
+}
+.hl.str {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.std {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55aa55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+</style>
+  <title>Reproducible Research Peer Assignment #1</title>
+</head>
+<body>
+<div class="chunk" id="unnamed-chunk-1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com">#Load the data (i.e. read.csv())</span>
+<span class="hl std">data</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">read.csv</span><span class="hl std">(</span><span class="hl str">&quot;activity.csv&quot;</span><span class="hl std">,</span> <span class="hl kwc">stringsAsFactors</span><span class="hl std">=</span><span class="hl num">FALSE</span><span class="hl std">)</span>
+
+<span class="hl com">#What is mean total number of steps taken per day?</span>
+
+<span class="hl com">#Calculate the total number of steps taken per day</span>
+<span class="hl std">total_steps</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">aggregate</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">steps,</span> <span class="hl kwc">by</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">date),</span> <span class="hl kwc">FUN</span><span class="hl std">=sum,</span> <span class="hl kwc">na.rm</span><span class="hl std">=</span><span class="hl num">TRUE</span><span class="hl std">)</span>
+
+<span class="hl com">#Make a histogram of the total number of steps taken each day</span>
+<span class="hl kwd">colnames</span><span class="hl std">(total_steps)</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;Date&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;total_steps&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">hist</span><span class="hl std">(   total_steps</span><span class="hl opt">$</span><span class="hl std">total_steps,</span> <span class="hl kwc">breaks</span><span class="hl std">=</span><span class="hl kwd">seq</span><span class="hl std">(</span><span class="hl kwc">from</span><span class="hl std">=</span><span class="hl num">0</span><span class="hl std">,</span> <span class="hl kwc">to</span><span class="hl std">=</span><span class="hl num">25000</span><span class="hl std">,</span> <span class="hl kwc">by</span><span class="hl std">=</span><span class="hl num">2500</span><span class="hl std">),</span><span class="hl kwc">xlab</span><span class="hl std">=</span><span class="hl str">&quot;Total number of steps&quot;</span><span class="hl std">,</span> <span class="hl kwc">main</span><span class="hl std">=</span><span class="hl str">&quot;Histogram of the total number of steps taken each day&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-1-1.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" class="plot" /></div><div class="rcode">
+<div class="source"><pre class="knitr r"><span class="hl com">#Calculate and report the mean and median of the total number of steps taken per day</span>
+<span class="hl std">mean</span> <span class="hl kwb">=</span> <span class="hl kwd">mean</span><span class="hl std">(total_steps</span><span class="hl opt">$</span><span class="hl std">total_steps)</span>
+<span class="hl std">median</span> <span class="hl kwb">=</span> <span class="hl kwd">median</span><span class="hl std">(total_steps</span><span class="hl opt">$</span><span class="hl std">total_steps)</span>
+<span class="hl std">mean</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## [1] 9354.23
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl std">median</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## [1] 10395
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com">#What is the average daily activity pattern?</span>
+<span class="hl com">#Make a time series plot (i.e. type = &quot;l&quot;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)</span>
+<span class="hl std">average_steps</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">aggregate</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">steps,</span> <span class="hl kwc">by</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">interval),</span> <span class="hl kwc">FUN</span><span class="hl std">=mean,</span> <span class="hl kwc">na.rm</span><span class="hl std">=</span><span class="hl num">TRUE</span><span class="hl std">)</span>
+<span class="hl kwd">colnames</span><span class="hl std">(average_steps)</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;interval&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;average_steps&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">plot</span><span class="hl std">(average_steps</span><span class="hl opt">$</span><span class="hl std">interval, average_steps</span><span class="hl opt">$</span><span class="hl std">average_steps,</span> <span class="hl kwc">type</span><span class="hl std">=</span><span class="hl str">&quot;l&quot;</span><span class="hl std">,</span><span class="hl kwc">lwd</span><span class="hl std">=</span><span class="hl num">2</span><span class="hl std">,</span> <span class="hl kwc">xlab</span><span class="hl std">=</span><span class="hl str">&quot;5-minute interval&quot;</span><span class="hl std">,</span> <span class="hl kwc">ylab</span><span class="hl std">=</span><span class="hl str">&quot;Average number of steps taken, averaged across all days&quot;</span><span class="hl std">,</span> <span class="hl kwc">main</span><span class="hl std">=</span><span class="hl str">&quot;Time-series plot&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-1-2.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" class="plot" /></div><div class="rcode">
+<div class="source"><pre class="knitr r"><span class="hl com">#Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?</span>
+<span class="hl std">maximum_steps</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">which</span><span class="hl std">(average_steps</span><span class="hl opt">$</span><span class="hl std">average_steps</span> <span class="hl opt">==</span> <span class="hl kwd">max</span><span class="hl std">(average_steps</span><span class="hl opt">$</span><span class="hl std">average_steps))</span>
+<span class="hl std">maximum_interval</span> <span class="hl kwb">&lt;-</span> <span class="hl std">average_steps[maximum_steps,</span> <span class="hl num">1</span><span class="hl std">]</span>
+
+<span class="hl std">maximum_interval</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## [1] 835
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com">#Imputing missing values</span>
+<span class="hl com">#Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)</span>
+<span class="hl std">missing_values</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">sum</span><span class="hl std">(</span><span class="hl kwd">is.na</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">steps))</span>
+
+<span class="hl std">missing_values</span>
+</pre></div>
+<div class="output"><pre class="knitr r">## [1] 2304
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com">#Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.</span>
+<span class="hl std">missing_positions</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">which</span><span class="hl std">(</span><span class="hl kwd">is.na</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">steps))</span>
+<span class="hl std">mean_missing_positions</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">rep</span><span class="hl std">(</span><span class="hl kwd">mean</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">steps,</span> <span class="hl kwc">na.rm</span><span class="hl std">=T),</span> <span class="hl kwc">times</span><span class="hl std">=</span><span class="hl kwd">length</span><span class="hl std">(missing_positions))</span>
+
+<span class="hl std">mean_missing_positions</span>
+</pre></div>
+<div class="output"><pre class="knitr r">##    [1] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##    [9] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [17] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [25] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [33] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [41] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [49] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [57] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [65] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [73] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [81] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [89] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##   [97] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [105] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [113] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [121] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [129] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [137] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [145] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [153] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [161] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [169] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [177] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [185] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [193] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [201] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [209] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [217] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [225] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [233] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [241] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [249] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [257] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [265] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [273] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [281] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [289] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [297] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [305] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [313] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [321] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [329] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [337] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [345] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [353] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [361] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [369] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [377] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [385] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [393] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [401] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [409] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [417] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [425] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [433] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [441] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [449] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [457] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [465] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [473] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [481] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [489] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [497] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [505] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [513] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [521] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [529] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [537] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [545] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [553] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [561] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [569] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [577] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [585] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [593] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [601] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [609] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [617] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [625] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [633] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [641] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [649] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [657] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [665] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [673] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [681] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [689] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [697] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [705] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [713] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [721] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [729] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [737] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [745] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [753] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [761] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [769] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [777] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [785] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [793] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [801] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [809] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [817] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [825] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [833] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [841] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [849] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [857] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [865] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [873] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [881] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [889] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [897] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [905] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [913] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [921] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [929] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [937] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [945] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [953] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [961] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [969] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [977] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [985] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+##  [993] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1001] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1009] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1017] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1025] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1033] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1041] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1049] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1057] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1065] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1073] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1081] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1089] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1097] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1105] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1113] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1121] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1129] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1137] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1145] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1153] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1161] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1169] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1177] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1185] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1193] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1201] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1209] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1217] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1225] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1233] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1241] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1249] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1257] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1265] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1273] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1281] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1289] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1297] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1305] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1313] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1321] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1329] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1337] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1345] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1353] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1361] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1369] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1377] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1385] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1393] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1401] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1409] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1417] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1425] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1433] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1441] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1449] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1457] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1465] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1473] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1481] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1489] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1497] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1505] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1513] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1521] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1529] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1537] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1545] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1553] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1561] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1569] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1577] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1585] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1593] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1601] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1609] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1617] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1625] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1633] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1641] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1649] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1657] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1665] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1673] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1681] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1689] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1697] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1705] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1713] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1721] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1729] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1737] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1745] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1753] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1761] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1769] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1777] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1785] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1793] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1801] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1809] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1817] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1825] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1833] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1841] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1849] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1857] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1865] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1873] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1881] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1889] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1897] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1905] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1913] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1921] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1929] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1937] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1945] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1953] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1961] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1969] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1977] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1985] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [1993] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2001] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2009] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2017] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2025] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2033] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2041] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2049] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2057] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2065] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2073] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2081] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2089] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2097] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2105] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2113] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2121] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2129] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2137] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2145] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2153] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2161] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2169] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2177] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2185] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2193] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2201] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2209] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2217] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2225] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2233] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2241] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2249] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2257] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2265] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2273] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2281] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2289] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+## [2297] 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826 37.3826
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com">#Create a new dataset that is equal to the original dataset but with the missing data filled in.</span>
+<span class="hl com">#data$steps</span>
+<span class="hl std">data[missing_positions,</span> <span class="hl str">&quot;steps&quot;</span><span class="hl std">]</span> <span class="hl kwb">&lt;-</span> <span class="hl std">mean_missing_positions</span>
+<span class="hl com">#data$steps</span>
+
+<span class="hl com">#Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?</span>
+<span class="hl std">total_steps_each_day</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">aggregate</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">steps,</span> <span class="hl kwc">by</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">date),</span> <span class="hl kwc">FUN</span><span class="hl std">=sum)</span>
+<span class="hl kwd">colnames</span><span class="hl std">(total_steps_each_day)</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;date&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;total_steps&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">hist</span><span class="hl std">(total_steps_each_day</span><span class="hl opt">$</span><span class="hl std">total_steps,</span> <span class="hl kwc">breaks</span><span class="hl std">=</span><span class="hl kwd">seq</span><span class="hl std">(</span><span class="hl kwc">from</span><span class="hl std">=</span><span class="hl num">0</span><span class="hl std">,</span> <span class="hl kwc">to</span><span class="hl std">=</span><span class="hl num">25000</span><span class="hl std">,</span> <span class="hl kwc">by</span><span class="hl std">=</span><span class="hl num">2500</span><span class="hl std">),</span><span class="hl kwc">xlab</span><span class="hl std">=</span><span class="hl str">&quot;Total number of steps&quot;</span><span class="hl std">,</span> <span class="hl kwc">main</span><span class="hl std">=</span><span class="hl str">&quot;Histogram of the total number of steps taken each day&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-1-3.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" class="plot" /></div><div class="rcode">
+<div class="source"><pre class="knitr r"><span class="hl std">mean_steps</span> <span class="hl kwb">=</span> <span class="hl kwd">mean</span><span class="hl std">(total_steps_each_day</span><span class="hl opt">$</span><span class="hl std">total_steps)</span>
+<span class="hl std">median_steps</span> <span class="hl kwb">=</span> <span class="hl kwd">median</span><span class="hl std">(total_steps_each_day</span><span class="hl opt">$</span><span class="hl std">total_steps)</span>
+
+<span class="hl com">#Are there differences in activity patterns between weekdays and weekends?</span>
+<span class="hl com">#Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</span>
+<span class="hl std">data</span><span class="hl opt">$</span><span class="hl std">date</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">as.POSIXct</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">date,</span> <span class="hl kwc">format</span><span class="hl std">=</span><span class="hl str">&quot;%Y-%m-%d&quot;</span><span class="hl std">)</span>
+<span class="hl std">data</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">data.frame</span><span class="hl std">(</span><span class="hl kwc">date</span><span class="hl std">=data</span><span class="hl opt">$</span><span class="hl std">date,</span> <span class="hl kwc">weekday</span><span class="hl std">=</span><span class="hl kwd">tolower</span><span class="hl std">(</span><span class="hl kwd">weekdays</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">date)),</span> <span class="hl kwc">steps</span><span class="hl std">=data</span><span class="hl opt">$</span><span class="hl std">steps,</span> <span class="hl kwc">interval</span><span class="hl std">=data</span><span class="hl opt">$</span><span class="hl std">interval)</span>
+<span class="hl std">data</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">cbind</span><span class="hl std">(data,</span> <span class="hl kwc">daytype</span><span class="hl std">=</span><span class="hl kwd">ifelse</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">weekday</span> <span class="hl opt">==</span> <span class="hl str">&quot;saturday&quot;</span> <span class="hl opt">|</span> <span class="hl std">data</span><span class="hl opt">$</span><span class="hl std">weekday</span> <span class="hl opt">==</span> <span class="hl str">&quot;sunday&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;weekend&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;weekday&quot;</span><span class="hl std">))</span>
+<span class="hl std">dataa</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">data.frame</span><span class="hl std">(</span><span class="hl kwc">date</span><span class="hl std">=data</span><span class="hl opt">$</span><span class="hl std">date,</span> <span class="hl kwc">weekday</span><span class="hl std">=data</span><span class="hl opt">$</span><span class="hl std">weekday,</span> <span class="hl kwc">daytype</span><span class="hl std">=data</span><span class="hl opt">$</span><span class="hl std">daytype,</span> <span class="hl kwc">interval</span><span class="hl std">=data</span><span class="hl opt">$</span><span class="hl std">interval,</span> <span class="hl kwc">steps</span><span class="hl std">=data</span><span class="hl opt">$</span><span class="hl std">steps)</span>
+
+<span class="hl kwd">library</span><span class="hl std">(lattice)</span>
+<span class="hl std">average_steps</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">aggregate</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">steps,</span> <span class="hl kwc">by</span><span class="hl std">=</span><span class="hl kwd">list</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">daytype, data</span><span class="hl opt">$</span><span class="hl std">weekday, data</span><span class="hl opt">$</span><span class="hl std">interval), mean)</span>
+
+<span class="hl kwd">colnames</span><span class="hl std">(average_steps)</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;daytype&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;weekday&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;interval&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;average_steps&quot;</span><span class="hl std">)</span>
+<span class="hl kwd">xyplot</span><span class="hl std">(average_steps</span> <span class="hl opt">~</span> <span class="hl std">interval</span> <span class="hl opt">|</span> <span class="hl std">daytype, average_steps,</span> <span class="hl kwc">type</span><span class="hl std">=</span><span class="hl str">&quot;l&quot;</span><span class="hl std">,</span> <span class="hl kwc">lwd</span><span class="hl std">=</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl kwc">xlab</span><span class="hl std">=</span><span class="hl str">&quot;5- minute interval&quot;</span><span class="hl std">,</span> <span class="hl kwc">ylab</span><span class="hl std">=</span><span class="hl str">&quot;average number of steps taken, averaged across all weekday days or weekend days&quot;</span><span class="hl std">,</span><span class="hl kwc">layout</span><span class="hl std">=</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span><span class="hl num">2</span><span class="hl std">),</span> <span class="hl kwc">col</span><span class="hl std">=</span><span class="hl str">'Black'</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/unnamed-chunk-1-4.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" class="plot" /></div></div>
+
+</body>
+</html>
+
