@@ -13,7 +13,7 @@ in R console write
 > library(knitr)
 > knit('min.html')
 
-for above code to work analysis.csv and min.Rhtml should be in working directory of R
+for above code to work analysis.csv and min.html should be in working directory of R
 
 thanks
 Muhammad Suleman
